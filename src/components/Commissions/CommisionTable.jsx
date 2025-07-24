@@ -226,7 +226,7 @@ function CommissionsTable() {
                     <th>Phone</th>
                     <th>Amount</th>
                     <th>Initial Commission</th>
-                    <th>Final Commission</th>
+                    {/* <th>Final Commission</th> */}
                     <th>Sub-region</th>
                     <th>Region</th>
                     <th>Distributor</th>
@@ -258,7 +258,7 @@ function CommissionsTable() {
                         <td data-label="Phone">{item.phone_number}</td>
                         <td data-label="Amount">{item.amount}</td>
                         <td data-label="Initial Commission">{item.initial_commission}</td>
-                        <td data-label="Final Commission">{item.final_commission}</td>
+                        {/* <td data-label="Final Commission">{item.final_commission}</td> */}
                         <td data-label="Sub-region">{item.sub_region}</td>
                         <td data-label="Region">{item.region_name}</td>
                         <td data-label="Distributor">{item.distributor}</td>

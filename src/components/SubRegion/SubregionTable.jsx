@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import Swal from 'sweetalert2';
-import { FaEye, FaTrash } from 'react-icons/fa';
-import GenericModal from '../GenericModal';
-import SubregionRegistration from './SubregionRegistration';
-import SubregionUpdate from './SubRegionUpdate';
-import SubregionView from './SubregionView';
-import { useSelector } from 'react-redux';
-import apiClient from '../apiClient';
-import '../../styles/registeredTables.css';
-import { usePagination } from '../PaginationContext';
+import React, { useState, useEffect } from "react";
+import Swal from "sweetalert2";
+import { FaEye, FaTrash } from "react-icons/fa";
+import GenericModal from "../GenericModal";
+import SubregionRegistration from "./SubregionRegistration";
+import SubregionUpdate from "./SubRegionUpdate";
+import SubregionView from "./SubregionView";
+import { useSelector } from "react-redux";
+import apiClient from "../apiClient";
+import "../../styles/registeredTables.css";
+import { usePagination } from "../PaginationContext";
 
 const SubregionTable = () => {
   const accessToken = useSelector((state) => state.auth.accessToken);
@@ -27,12 +27,12 @@ const SubregionTable = () => {
   const fetchSubregions = async () => {
     try {
       // setLoading(true);
-      const { data } = await apiClient.get('/subregion/all');
+      const { data } = await apiClient.get("/subregion/all");
       setSubregions(data);
     } catch (err) {
       setError(err.message);
     } finally {
-    //  setLoading(false);
+      //  setLoading(false);
     }
   };
 
@@ -42,14 +42,20 @@ const SubregionTable = () => {
 
   // Reset page to 1 when search term changes.
   useEffect(() => {
-    setPageForTab('all', 1);
-   
+    setPageForTab("all", 1);
   }, [searchTerm]);
 
-  const filteredSubregions = subregions.filter(r =>
-    (r.subRegionName ? r.subRegionName.toLowerCase() : "").includes(searchTerm.toLowerCase()) ||
-    (r.subRegionCode ? r.subRegionCode.toLowerCase() : "").includes(searchTerm.toLowerCase()) ||
-    (r.regionName ? r.regionName.toLowerCase() : "").includes(searchTerm.toLowerCase())
+  const filteredSubregions = subregions.filter(
+    (r) =>
+      (r.subRegionName ? r.subRegionName.toLowerCase() : "").includes(
+        searchTerm.toLowerCase()
+      ) ||
+      (r.subRegionCode ? r.subRegionCode.toLowerCase() : "").includes(
+        searchTerm.toLowerCase()
+      ) ||
+      (r.regionName ? r.regionName.toLowerCase() : "").includes(
+        searchTerm.toLowerCase()
+      )
   );
 
   const totalPages = Math.ceil(filteredSubregions.length / rowsPerPage);
@@ -59,7 +65,7 @@ const SubregionTable = () => {
   );
 
   const handleDelete = async (id) => {
-    const subregion = subregions.find(r => r.id === id);
+    const subregion = subregions.find((r) => r.id === id);
     const result = await Swal.fire({
       title: "Confirm Deletion",
       text: `To delete subregion "${subregion.subRegionName}", please type "yes":`,
@@ -71,27 +77,38 @@ const SubregionTable = () => {
       confirmButtonColor: "#2B9843",
       preConfirm: (inputValue) => {
         if (inputValue !== "yes") {
-          Swal.showValidationMessage('You must type "yes" to confirm deletion.');
+          Swal.showValidationMessage(
+            'You must type "yes" to confirm deletion.'
+          );
         }
         return inputValue;
-      }
+      },
     });
     if (result.isConfirmed && result.value === "yes") {
       try {
-        const response = await apiClient.delete('/subregion/delete', {
-          params: { subRegionCode: subregion.subRegionCode }
+        const response = await apiClient.delete("/subregion/delete", {
+          params: { subRegionCode: subregion.subRegionCode },
         });
         const successMessage = response.data;
-        Swal.fire({ icon: "success", title: "Deleted!", text: successMessage, confirmButtonColor: "#2B9843" });
-        setSubregions(subregions.filter(r => r.id !== id));
+        Swal.fire({
+          icon: "success",
+          title: "Deleted!",
+          text: successMessage,
+          confirmButtonColor: "#2B9843",
+        });
+        setSubregions(subregions.filter((r) => r.id !== id));
       } catch (err) {
-        Swal.fire({ icon: "error", title: "Delete Failed", text: err.response?.data || err.message });
+        Swal.fire({
+          icon: "error",
+          title: "Delete Failed",
+          text: err.response?.data || err.message,
+        });
       }
     }
   };
 
   const handleEdit = (id) => {
-    const subregion = subregions.find(r => r.id === id);
+    const subregion = subregions.find((r) => r.id === id);
     setEditingSubregion(subregion);
     setMode("update");
   };
@@ -123,7 +140,7 @@ const SubregionTable = () => {
                   Swal.fire({
                     icon: "error",
                     title: "Access Denied",
-                    text: "You do not have permission to register a subregion."
+                    text: "You do not have permission to register a subregion.",
                   });
                   return;
                 }
@@ -156,65 +173,85 @@ const SubregionTable = () => {
                   <td data-label="Area Code">{r.subRegionCode}</td>
                   <td data-label="Region">{r.regionName}</td>
                   <td data-label="Actions">
-                    <button
-                      className="action-btn update-btn"
-                      onClick={() => {
-                        if (!groupData?.permissions?.updateSubRegion) {
-                          Swal.fire({ icon: "error", title: "Access Denied", text: "You do not have permission to update a subregion." });
-                          return;
-                        }
-                        handleEdit(r.id);
-                      }}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="action-btn delete-btn"
-                      onClick={() => {
-                        if (!groupData?.permissions?.deleteSubRegion) {
-                          Swal.fire({ icon: "error", title: "Access Denied", text: "You do not have permission to delete a subregion." });
-                          return;
-                        }
-                        handleDelete(r.id);
-                      }}
-                    >
-                      <FaTrash /> Delete
-                    </button>
-                    <button
-                      className="action-btn view-btn"
-                      onClick={() => {
-                        if (!groupData?.permissions?.readSubRegion) {
-                          Swal.fire({ icon: "error", title: "Access Denied", text: "You do not have permission to view a subregion." });
-                          return;
-                        }
-                        handleView(r);
-                      }}
-                    >
-                      <FaEye /> View
-                    </button>
+                    <div className="dropdown">
+                      <button className="dropbtn">action</button>
+                      <div className="dropdown-content">
+                        <button
+                          className="action-btn update-btn"
+                          onClick={() => {
+                            if (!groupData?.permissions?.updateSubRegion) {
+                              Swal.fire({
+                                icon: "error",
+                                title: "Access Denied",
+                                text: "You do not have permission to update a subregion.",
+                              });
+                              return;
+                            }
+                            handleEdit(r.id);
+                          }}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="action-btn delete-btn"
+                          onClick={() => {
+                            if (!groupData?.permissions?.deleteSubRegion) {
+                              Swal.fire({
+                                icon: "error",
+                                title: "Access Denied",
+                                text: "You do not have permission to delete a subregion.",
+                              });
+                              return;
+                            }
+                            handleDelete(r.id);
+                          }}
+                        >
+                          <FaTrash /> Delete
+                        </button>
+                        <button
+                          className="action-btn view-btn"
+                          onClick={() => {
+                            if (!groupData?.permissions?.readSubRegion) {
+                              Swal.fire({
+                                icon: "error",
+                                title: "Access Denied",
+                                text: "You do not have permission to view a subregion.",
+                              });
+                              return;
+                            }
+                            handleView(r);
+                          }}
+                        >
+                          <FaEye /> View
+                        </button>
+                      </div>
+                    </div>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
           {filteredSubregions.length >= rowsPerPage && (
-            <div style={{ marginTop: '10px', textAlign: 'center' }}>
-              {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
-                <button
-                  key={page}
-                  onClick={() => setPageForTab('all', page)}
-                  style={{
-                    margin: '0 5px',
-                    padding: '5px 10px',
-                    backgroundColor: currentPage === page ? '#0a803e' : '#f0f0f0',
-                    color: currentPage === page ? '#fff' : '#000',
-                    border: 'none',
-                    cursor: 'pointer',
-                  }}
-                >
-                  {page}
-                </button>
-              ))}
+            <div style={{ marginTop: "10px", textAlign: "center" }}>
+              {Array.from({ length: totalPages }, (_, index) => index + 1).map(
+                (page) => (
+                  <button
+                    key={page}
+                    onClick={() => setPageForTab("all", page)}
+                    style={{
+                      margin: "0 5px",
+                      padding: "5px 10px",
+                      backgroundColor:
+                        currentPage === page ? "#0a803e" : "#f0f0f0",
+                      color: currentPage === page ? "#fff" : "#000",
+                      border: "none",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {page}
+                  </button>
+                )
+              )}
             </div>
           )}
         </div>
@@ -224,7 +261,10 @@ const SubregionTable = () => {
   if (mode === "register") {
     return (
       <GenericModal onClose={() => setMode("table")}>
-        <SubregionRegistration onClose={() => setMode("table")} onRegistrationSuccess={fetchSubregions} />
+        <SubregionRegistration
+          onClose={() => setMode("table")}
+          onRegistrationSuccess={fetchSubregions}
+        />
       </GenericModal>
     );
   }
@@ -241,8 +281,19 @@ const SubregionTable = () => {
   }
   if (mode === "view" && viewRecord) {
     return (
-      <GenericModal onClose={() => { setViewRecord(null); setMode("table"); }}>
-        <SubregionView record={viewRecord} onClose={() => { setViewRecord(null); setMode("table"); }} />
+      <GenericModal
+        onClose={() => {
+          setViewRecord(null);
+          setMode("table");
+        }}
+      >
+        <SubregionView
+          record={viewRecord}
+          onClose={() => {
+            setViewRecord(null);
+            setMode("table");
+          }}
+        />
       </GenericModal>
     );
   }

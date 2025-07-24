@@ -161,19 +161,6 @@ const GroupedDataTable = () => {
               </tr>
             </thead>
             <tbody>
-              {/* {paginatedData.map((item, index) => {
-                const { agent } = item;
-                return (
-                  <tr key={`${agent.email}-${index}`}>
-                    <td data-label="Agent Name">{agent.agentName}</td>
-                    <td data-label="Phone Number">{agent.phoneNumber}</td>
-                    <td data-label="Email">{agent.email}</td>
-                    <td data-label="Total Commission">
-                      {agent.finalCommission}
-                    </td>
-                  </tr>
-                );
-              })} */}
               {paginatedData.map((agent, index) => (
                 <tr key={`${agent.email}-${index}`}>
                   <td data-label="Agent Name">{agent.agentName}</td>
