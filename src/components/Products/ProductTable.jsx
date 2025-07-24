@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import Swal from 'sweetalert2';
-import GenericModal from '../GenericModal';
-import ProductRegistration from './ProductRegistration';
-import ProductUpdate from './ProductUpdate';
-import ProductView from './ProductView';
-import CategoriesTable from '../Category/CategoryTable';
-import { useSelector } from 'react-redux';
-import apiClient from '../apiClient';
-import '../../styles/registeredTables.css';
-import { usePagination } from '../PaginationContext';
+import React, { useState, useEffect } from "react";
+import Swal from "sweetalert2";
+import GenericModal from "../GenericModal";
+import ProductRegistration from "./ProductRegistration";
+import ProductUpdate from "./ProductUpdate";
+import ProductView from "./ProductView";
+import CategoriesTable from "../Category/CategoryTable";
+import { useSelector } from "react-redux";
+import apiClient from "../apiClient";
+import "../../styles/registeredTables.css";
+import { usePagination } from "../PaginationContext";
 
 function ProductTable() {
   const accessToken = useSelector((state) => state.auth.accessToken);
   const groupData = useSelector((state) => state.auth.groupData);
   const [products, setProducts] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [registerMode, setRegisterMode] = useState(false);
   const [editingRecord, setEditingRecord] = useState(null);
   const [viewRecord, setViewRecord] = useState(null);
@@ -25,10 +25,10 @@ function ProductTable() {
 
   const fetchProducts = async () => {
     try {
-      const { data } = await apiClient.get('/product/all');
+      const { data } = await apiClient.get("/product/all");
       setProducts(data);
     } catch (err) {
-      Swal.fire('Error', err.response?.data || err.message, 'error');
+      Swal.fire("Error", err.response?.data || err.message, "error");
     }
   };
 
@@ -38,12 +38,14 @@ function ProductTable() {
 
   // Reset page to 1 when search term changes.
   useEffect(() => {
-    setPageForTab('all', 1);
+    setPageForTab("all", 1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm]);
 
-  const filteredProducts = products.filter(product =>
-    (product.productDescription || '').toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredProducts = products.filter((product) =>
+    (product.productDescription || "")
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase())
   );
 
   const totalPages = Math.ceil(filteredProducts.length / rowsPerPage);
@@ -54,26 +56,30 @@ function ProductTable() {
 
   const handleDelete = async (product) => {
     Swal.fire({
-      title: 'Are you sure?',
+      title: "Are you sure?",
       text: `To confirm deletion of "${product.productDescription}", please type "yes" below:`,
-      input: 'text',
-      inputPlaceholder: 'Type yes to confirm',
+      input: "text",
+      inputPlaceholder: "Type yes to confirm",
       showCancelButton: true,
-      confirmButtonText: 'Delete',
+      confirmButtonText: "Delete",
       preConfirm: (inputValue) => {
-        if (inputValue !== 'yes') {
-          Swal.showValidationMessage('You must type "yes" to confirm deletion.');
+        if (inputValue !== "yes") {
+          Swal.showValidationMessage(
+            'You must type "yes" to confirm deletion.'
+          );
         }
         return inputValue;
-      }
+      },
     }).then(async (result) => {
-      if (result.isConfirmed && result.value === 'yes') {
+      if (result.isConfirmed && result.value === "yes") {
         try {
-          const { data: responseText } = await apiClient.delete(`/product/delete?id=${product.id}`);
-          Swal.fire('Deleted!', responseText, 'success');
-          setProducts(products.filter(p => p.id !== product.id));
+          const { data: responseText } = await apiClient.delete(
+            `/product/delete?id=${product.id}`
+          );
+          Swal.fire("Deleted!", responseText, "success");
+          setProducts(products.filter((p) => p.id !== product.id));
         } catch (err) {
-          Swal.fire('Error', err.response?.data || err.message, 'error');
+          Swal.fire("Error", err.response?.data || err.message, "error");
         }
       }
     });
@@ -90,7 +96,10 @@ function ProductTable() {
   if (registerMode) {
     return (
       <GenericModal onClose={() => setRegisterMode(false)}>
-        <ProductRegistration onClose={() => setRegisterMode(false)} onRegistrationSuccess={fetchProducts} />
+        <ProductRegistration
+          onClose={() => setRegisterMode(false)}
+          onRegistrationSuccess={fetchProducts}
+        />
       </GenericModal>
     );
   }
@@ -98,7 +107,11 @@ function ProductTable() {
   if (editingRecord) {
     return (
       <GenericModal onClose={() => setEditingRecord(null)}>
-        <ProductUpdate record={editingRecord} onClose={() => setEditingRecord(null)} onUpdateSuccess={fetchProducts} />
+        <ProductUpdate
+          record={editingRecord}
+          onClose={() => setEditingRecord(null)}
+          onUpdateSuccess={fetchProducts}
+        />
       </GenericModal>
     );
   }
@@ -113,13 +126,15 @@ function ProductTable() {
 
   if (categoriesMode) {
     return (
-      <GenericModal onClose={() => setCategoriesMode(false)} showBackButton = {false}>
-        <CategoriesTable onClose={() => setCategoriesMode(false)} 
-                         onBack={() => setCategoriesMode(false)}
-                                  />
+      <GenericModal
+        onClose={() => setCategoriesMode(false)}
+        showBackButton={false}
+      >
+        <CategoriesTable
+          onClose={() => setCategoriesMode(false)}
+          onBack={() => setCategoriesMode(false)}
+        />
       </GenericModal>
-
-
     );
   }
 
@@ -140,7 +155,7 @@ function ProductTable() {
           <button
             className="modal-close-btn"
             onClick={() => setCategoriesMode(true)}
-            style={{ margin: '1rem' }}
+            style={{ margin: "1rem" }}
           >
             View Categories
           </button>
@@ -149,9 +164,9 @@ function ProductTable() {
             onClick={() => {
               if (!groupData?.permissions?.createProduct) {
                 Swal.fire({
-                  icon: 'error',
-                  title: 'Access Denied',
-                  text: 'You do not have permission to register a product.'
+                  icon: "error",
+                  title: "Access Denied",
+                  text: "You do not have permission to register a product.",
                 });
                 return;
               }
@@ -183,88 +198,102 @@ function ProductTable() {
             {paginatedProducts.length > 0 ? (
               paginatedProducts.map((product, index) => (
                 <tr key={product.id}>
-                  <td data-label="SN">{(currentPage - 1) * rowsPerPage + index + 1}</td>
-                  <td data-label="Product Description">{product.productDescription}</td>
+                  <td data-label="SN">
+                    {(currentPage - 1) * rowsPerPage + index + 1}
+                  </td>
+                  <td data-label="Product Description">
+                    {product.productDescription}
+                  </td>
                   <td data-label="Category">{product.category}</td>
                   <td data-label="Price">{product.price}</td>
                   <td data-label="Unit">{product.unit}</td>
                   <td data-label="Actions">
-                    <button
-                      className="action-btn update-btn"
-                      onClick={() => {
-                        if (!groupData?.permissions?.updateProduct) {
-                          Swal.fire({
-                            icon: 'error',
-                            title: 'Access Denied',
-                            text: 'You do not have permission to update a product.'
-                          });
-                          return;
-                        }
-                        handleEdit(product);
-                      }}
-                    >
-                      Update
-                    </button>
-                    <button
-                      className="action-btn delete-btn"
-                      onClick={() => {
-                        if (!groupData?.permissions?.deleteProduct) {
-                          Swal.fire({
-                            icon: 'error',
-                            title: 'Access Denied',
-                            text: 'You do not have permission to delete a product.'
-                          });
-                          return;
-                        }
-                        handleDelete(product);
-                      }}
-                    >
-                      Delete
-                    </button>
-                    <button
-                      className="action-btn view-btn"
-                      onClick={() => {
-                        if (!groupData?.permissions?.readProduct) {
-                          Swal.fire({
-                            icon: 'error',
-                            title: 'Access Denied',
-                            text: 'You do not have permission to view a product.'
-                          });
-                          return;
-                        }
-                        handleView(product);
-                      }}
-                    >
-                      View
-                    </button>
+                    <div className="dropdown">
+                      <button className="dropbtn">action</button>
+                      <div className="dropdown-content">
+                        <button
+                          className="action-btn update-btn"
+                          onClick={() => {
+                            if (!groupData?.permissions?.updateProduct) {
+                              Swal.fire({
+                                icon: "error",
+                                title: "Access Denied",
+                                text: "You do not have permission to update a product.",
+                              });
+                              return;
+                            }
+                            handleEdit(product);
+                          }}
+                        >
+                          Update
+                        </button>
+                        <button
+                          className="action-btn delete-btn"
+                          onClick={() => {
+                            if (!groupData?.permissions?.deleteProduct) {
+                              Swal.fire({
+                                icon: "error",
+                                title: "Access Denied",
+                                text: "You do not have permission to delete a product.",
+                              });
+                              return;
+                            }
+                            handleDelete(product);
+                          }}
+                        >
+                          Delete
+                        </button>
+                        <button
+                          className="action-btn view-btn"
+                          onClick={() => {
+                            if (!groupData?.permissions?.readProduct) {
+                              Swal.fire({
+                                icon: "error",
+                                title: "Access Denied",
+                                text: "You do not have permission to view a product.",
+                              });
+                              return;
+                            }
+                            handleView(product);
+                          }}
+                        >
+                          View
+                        </button>
+                      </div>
+                    </div>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="5" className="no-data">No products found</td>
+                <td colSpan="5" className="no-data">
+                  No products found
+                </td>
               </tr>
             )}
           </tbody>
         </table>
         {filteredProducts.length >= rowsPerPage && (
-          <div style={{ marginTop: '10px', textAlign: 'center' }}>
-            {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
-              <button
-                key={page}
-                onClick={() => setPageForTab('all', page)}
-                style={{
-                  margin: '0 5px',
-                  padding: '5px 10px',
-                  backgroundColor: currentPage === page ? '#0a803e' : '#f0f0f0',
-                  color: currentPage === page ? '#fff' : '#000',
-                  border: 'none',
-                  cursor: 'pointer',
-                }}
-              >
-                {page}
-              </button>
-            ))}
+          <div style={{ marginTop: "10px", textAlign: "center" }}>
+            {Array.from({ length: totalPages }, (_, index) => index + 1).map(
+              (page) => (
+                <button
+                  key={page}
+                  onClick={() => setPageForTab("all", page)}
+                  style={{
+                    margin: "0 5px",
+                    padding: "5px 10px",
+                    backgroundColor:
+                      currentPage === page ? "#0a803e" : "#f0f0f0",
+                    color: currentPage === page ? "#fff" : "#000",
+                    border: "none",
+                    cursor: "pointer",
+                  }}
+                >
+                  {page}
+                </button>
+              )
+            )}
           </div>
         )}
       </div>

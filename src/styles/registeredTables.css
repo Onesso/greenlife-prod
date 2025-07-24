@@ -23,7 +23,7 @@
 
 body {
   margin: 0;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   background: #f7f7f7;
   color: #333;
 }
@@ -33,7 +33,7 @@ body {
   position: relative;
   width: 100%;
   font-family: Arial, sans-serif;
-  overflow: visible; 
+  overflow: visible;
 }
 
 .dropdown-selected {
@@ -61,7 +61,7 @@ body {
   z-index: 1000;
   max-height: 200px;
   overflow-y: auto;
-  -webkit-overflow-scrolling: touch; 
+  -webkit-overflow-scrolling: touch;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 4px;
 }
@@ -121,7 +121,7 @@ body {
 }
 
 .register-btn {
-  background: #2B9843;
+  background: #2b9843;
   color: #fff;
   border: none;
   border-radius: 4px;
@@ -132,7 +132,7 @@ body {
 }
 
 button.modal-close-btn {
-  background: #2B9843;
+  background: #2b9843;
   color: #fff;
   border: none;
   border-radius: 4px;
@@ -178,7 +178,7 @@ button.modal-close-btn {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: 1rem; 
+  padding: 1rem;
 }
 
 .rm-header-overlay h2 {
@@ -186,7 +186,7 @@ button.modal-close-btn {
   font-size: 2em;
   background: rgba(43, 152, 67, 0.85);
   padding: 10px 20px;
-  margin: 0; 
+  margin: 0;
 }
 
 /* Form Styles */
@@ -219,7 +219,7 @@ button.modal-close-btn {
 
 .form-group label .icon {
   margin-right: 8px;
-  color: #2B9843;
+  color: #2b9843;
 }
 
 .form-group input,
@@ -233,13 +233,13 @@ button.modal-close-btn {
 
 .form-group input:focus,
 .form-group select:focus {
-  border-color: #2B9843;
+  border-color: #2b9843;
   outline: none;
 }
 
 .submit-btn {
   width: 100%;
-  background: #2B9843;
+  background: #2b9843;
   color: #fff;
   padding: 15px;
   border: none;
@@ -391,7 +391,7 @@ tbody tr:nth-child(even) {
   display: flex;
   gap: 10px;
   margin: 1rem 0;
-  border-bottom: 2px solid #2B9843;
+  border-bottom: 2px solid #2b9843;
 }
 
 .tab-btn {
@@ -401,12 +401,12 @@ tbody tr:nth-child(even) {
   font-size: 1rem;
   cursor: pointer;
   border-bottom: 3px solid transparent;
-  color: #2B9843;
+  color: #2b9843;
   transition: all 0.3s ease;
 }
 
 .tab-btn.active {
-  background: #2B9843;
+  background: #2b9843;
   color: #fff;
   border-bottom: none;
   border-radius: 4px 4px 0 0;
@@ -617,7 +617,7 @@ tbody tr:nth-child(even) {
 
 .form-group label .icon {
   margin-right: 8px;
-  color: #2B9843;
+  color: #2b9843;
 }
 
 .form-group input,
@@ -631,13 +631,13 @@ tbody tr:nth-child(even) {
 
 .form-group input:focus,
 .form-group select:focus {
-  border-color: #2B9843;
+  border-color: #2b9843;
   outline: none;
 }
 
 .submit-btn {
   width: 100%;
-  background: #2B9843;
+  background: #2b9843;
   color: #fff;
   padding: 15px;
   border: none;
@@ -670,9 +670,17 @@ tbody tr:nth-child(even) {
   .subregion-header-overlay h2,
   .region-header-overlay h2,
   .rm-header-overlay h2 {
-    font-size: clamp(1.2rem, calc(1.2rem + (0.8 * ((100vw - 480px) / 646))), 2rem);
+    font-size: clamp(
+      1.2rem,
+      calc(1.2rem + (0.8 * ((100vw - 480px) / 646))),
+      2rem
+    );
     margin-top: 0;
-    margin-bottom: clamp(10px, calc(10px + (10 * ((100vw - 480px) / 646))), 20px);
+    margin-bottom: clamp(
+      10px,
+      calc(10px + (10 * ((100vw - 480px) / 646))),
+      20px
+    );
   }
 }
 
@@ -805,14 +813,13 @@ tbody tr:nth-child(even) {
     gap: 6px;
     margin: 1rem 0;
   }
-  
+
   .tab-btn {
     padding: 5px 10px;
     font-size: 0.8rem;
     cursor: pointer;
     border-bottom: 3px solid transparent;
   }
-  
 }
 
 /* Updated Table Scroll Logic */
@@ -825,4 +832,36 @@ tbody tr:nth-child(even) {
   display: table;
   width: auto;
   min-width: 100%;
+}
+
+.dropbtn {
+  background-color: #04aa6d;
+  color: white;
+  padding: 10px;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 100px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown:hover .dropbtn {
+  background-color: #3e8e41;
 }

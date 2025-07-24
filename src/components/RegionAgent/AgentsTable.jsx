@@ -1,31 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import Swal from 'sweetalert2';
-import { FaTrash, FaEye } from 'react-icons/fa';
-import GenericModal from '../GenericModal';
-import AgentsRegistration from './AgentRegistration';
-import AgentsUpdate from './AgentUpdate';
-import AgentsView from './AgentsView';
-import { useSelector } from 'react-redux';
-import apiClient from '../apiClient';
-import '../../styles/registeredTables.css';
-import { usePagination } from '../PaginationContext';
+import React, { useState, useEffect } from "react";
+import Swal from "sweetalert2";
+import { FaTrash, FaEye } from "react-icons/fa";
+import GenericModal from "../GenericModal";
+import AgentsRegistration from "./AgentRegistration";
+import AgentsUpdate from "./AgentUpdate";
+import AgentsView from "./AgentsView";
+import { useSelector } from "react-redux";
+import apiClient from "../apiClient";
+import "../../styles/registeredTables.css";
+import { usePagination } from "../PaginationContext";
 
 function AgentsTable() {
   const groupData = useSelector((state) => state.auth.groupData);
   const accessToken = useSelector((state) => state.auth.accessToken);
   const [registerMode, setRegisterMode] = useState(false);
   const [agents, setAgents] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [error, setError] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [error, setError] = useState("");
   const [editingRecord, setEditingRecord] = useState(null);
   const [viewRecord, setViewRecord] = useState(null);
-
   const { pages, setPageForTab, rowsPerPage } = usePagination();
   const currentPage = pages.all || 1;
 
   const fetchAgents = async () => {
     try {
-      const { data } = await apiClient.get('/agent/email/region');
+      const { data } = await apiClient.get("/agent/email/region");
       setAgents(data || []);
     } catch (err) {
       setError(err.message);
@@ -40,15 +39,18 @@ function AgentsTable() {
     setPageForTab("all", 1);
   }, [searchTerm]);
 
-  const filteredAgents = agents.filter(agent => {
+  const filteredAgents = agents.filter((agent) => {
     const fullName = `${agent.firstName} ${agent.lastName}`.toLowerCase();
     const distributorName = (agent.distributor || "").toLowerCase();
     return (
       fullName.includes(searchTerm.toLowerCase()) ||
-      (agent.idNumber && agent.idNumber.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (agent.subRegion && agent.subRegion.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (agent.idNumber &&
+        agent.idNumber.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (agent.subRegion &&
+        agent.subRegion.toLowerCase().includes(searchTerm.toLowerCase())) ||
       distributorName.includes(searchTerm.toLowerCase()) ||
-      (agent.email && agent.email.toLowerCase().includes(searchTerm.toLowerCase()))
+      (agent.email &&
+        agent.email.toLowerCase().includes(searchTerm.toLowerCase()))
     );
   });
 
@@ -60,28 +62,34 @@ function AgentsTable() {
 
   const handleDelete = async (email) => {
     const result = await Swal.fire({
-      title: 'Are you sure?',
+      title: "Are you sure?",
       text: `You are about to delete the agent with email: ${email}`,
-      icon: 'warning',
-      input: 'text',
-      inputPlaceholder: 'Type yes to confirm',
+      icon: "warning",
+      input: "text",
+      inputPlaceholder: "Type yes to confirm",
       showCancelButton: true,
-      confirmButtonText: 'Yes, delete it!',
-      cancelButtonText: 'Cancel',
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
       preConfirm: (inputValue) => {
-        if (inputValue !== 'yes') {
-          Swal.showValidationMessage('You must type "yes" to confirm deletion.');
+        if (inputValue !== "yes") {
+          Swal.showValidationMessage(
+            'You must type "yes" to confirm deletion.'
+          );
         }
         return inputValue;
-      }
+      },
     });
     if (!result.isConfirmed) return;
     try {
-      const { data: successMessage } = await apiClient.delete(`/agent/delete?email=${encodeURIComponent(email)}`);
-      Swal.fire({ icon: 'success', title: 'Deleted!', text: successMessage });
-      setAgents(prevAgents => prevAgents.filter(agent => agent.email !== email));
+      const { data: successMessage } = await apiClient.delete(
+        `/agent/delete?email=${encodeURIComponent(email)}`
+      );
+      Swal.fire({ icon: "success", title: "Deleted!", text: successMessage });
+      setAgents((prevAgents) =>
+        prevAgents.filter((agent) => agent.email !== email)
+      );
     } catch (err) {
-      Swal.fire({ icon: 'error', title: 'Delete Failed', text: err.message });
+      Swal.fire({ icon: "error", title: "Delete Failed", text: err.message });
     }
   };
 
@@ -90,23 +98,35 @@ function AgentsTable() {
 
   if (error) return <div className="registered-table">Error: {error}</div>;
 
+ 
+
   return (
     <>
-      {(registerMode || editingRecord || viewRecord) ? (
+      {registerMode || editingRecord || viewRecord ? (
         <>
           {registerMode && (
             <GenericModal onClose={() => setRegisterMode(false)}>
-              <AgentsRegistration onClose={() => setRegisterMode(false)} onRegistrationSuccess={fetchAgents} />
+              <AgentsRegistration
+                onClose={() => setRegisterMode(false)}
+                onRegistrationSuccess={fetchAgents}
+              />
             </GenericModal>
           )}
           {editingRecord && (
             <GenericModal onClose={() => setEditingRecord(null)}>
-              <AgentsUpdate record={editingRecord} onClose={() => setEditingRecord(null)} onUpdateSuccess={fetchAgents} />
+              <AgentsUpdate
+                record={editingRecord}
+                onClose={() => setEditingRecord(null)}
+                onUpdateSuccess={fetchAgents}
+              />
             </GenericModal>
           )}
           {viewRecord && (
             <GenericModal onClose={() => setViewRecord(null)}>
-              <AgentsView record={viewRecord} onClose={() => setViewRecord(null)} />
+              <AgentsView
+                record={viewRecord}
+                onClose={() => setViewRecord(null)}
+              />
             </GenericModal>
           )}
         </>
@@ -128,7 +148,11 @@ function AgentsTable() {
                 className="register-btn"
                 onClick={() => {
                   if (!groupData?.permissions?.createAgent) {
-                    Swal.fire({ icon: 'error', title: 'Access Denied', text: 'You do not have permission to register an agent.' });
+                    Swal.fire({
+                      icon: "error",
+                      title: "Access Denied",
+                      text: "You do not have permission to register an agent.",
+                    });
                     return;
                   }
                   setRegisterMode(true);
@@ -161,68 +185,110 @@ function AgentsTable() {
                 {paginatedAgents.length > 0 ? (
                   paginatedAgents.map((agent, index) => (
                     <tr key={agent.id}>
-                      <td data-label="SN">{(currentPage - 1) * rowsPerPage + index + 1}</td>
-                      <td data-label="Agent Name">{agent.firstName} {agent.lastName}</td>
+                      <td data-label="SN">
+                        {(currentPage - 1) * rowsPerPage + index + 1}
+                      </td>
+                      <td data-label="Agent Name">
+                        {agent.firstName} {agent.lastName}
+                      </td>
                       <td data-label="ID Number">{agent.idNumber}</td>
                       <td data-label="Area">{agent.subRegion}</td>
                       <td data-label="Dealer">{agent.distributor}</td>
                       <td data-label="Email">{agent.email}</td>
                       <td data-label="Status">
-                        <span className={`status ${agent.active ? 'active' : 'inactive'}`}>
-                          {agent.active ? 'Active' : 'Inactive'}
+                        <span
+                          className={`status ${
+                            agent.active ? "active" : "inactive"
+                          }`}
+                        >
+                          {agent.active ? "Active" : "Inactive"}
                         </span>
                       </td>
                       <td data-label="Actions">
-                        <button className="action-btn update-btn" onClick={() => {
-                          if (!groupData?.permissions?.updateAgent) {
-                            Swal.fire({ icon: 'error', title: 'Access Denied', text: 'You do not have permission to update an agent.' });
-                            return;
-                          }
-                          handleEdit(agent);
-                        }}>
-                          Update
-                        </button>
-                        <button className="action-btn delete-btn" onClick={() => {
-                          if (!groupData?.permissions?.deleteAgent) {
-                            Swal.fire({ icon: 'error', title: 'Access Denied', text: 'You do not have permission to delete an agent.' });
-                            return;
-                          }
-                          handleDelete(agent.email);
-                        }}>
-                          <FaTrash /> Delete
-                        </button>
-                        <button className="action-btn view-btn" onClick={() => {
-                          if (!groupData?.permissions?.readAgent) {
-                            Swal.fire({ icon: 'error', title: 'Access Denied', text: 'You do not have permission to view agent details.' });
-                            return;
-                          }
-                          handleView(agent);
-                        }}>
-                          <FaEye /> View
-                        </button>
+                        <div className="dropdown">
+                          <button className="dropbtn">action</button>
+                          <div className="dropdown-content">
+                            <button
+                              className="action-btn update-btn"
+                              onClick={() => {
+                                if (!groupData?.permissions?.updateAgent) {
+                                  Swal.fire({
+                                    icon: "error",
+                                    title: "Access Denied",
+                                    text: "You do not have permission to update an agent.",
+                                  });
+                                  return;
+                                }
+                                handleEdit(agent);
+                              }}
+                            >
+                              Update
+                            </button>
+
+                            <button
+                              className="action-btn delete-btn"
+                              onClick={() => {
+                                if (!groupData?.permissions?.deleteAgent) {
+                                  Swal.fire({
+                                    icon: "error",
+                                    title: "Access Denied",
+                                    text: "You do not have permission to delete an agent.",
+                                  });
+                                  return;
+                                }
+                                handleDelete(agent.email);
+                              }}
+                            >
+                              <FaTrash /> Delete
+                            </button>
+
+                            <button
+                              className="action-btn view-btn"
+                              onClick={() => {
+                                if (!groupData?.permissions?.readAgent) {
+                                  Swal.fire({
+                                    icon: "error",
+                                    title: "Access Denied",
+                                    text: "You do not have permission to view agent details.",
+                                  });
+                                  return;
+                                }
+                                handleView(agent);
+                              }}
+                            >
+                              <FaEye /> View
+                            </button>
+                          </div>
+                        </div>
                       </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="8" className="no-data">No agents found</td>
+                    <td colSpan="8" className="no-data">
+                      No agents found
+                    </td>
                   </tr>
                 )}
               </tbody>
             </table>
             {filteredAgents.length >= rowsPerPage && (
-              <div style={{ marginTop: '10px', textAlign: 'center' }}>
-                {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
+              <div style={{ marginTop: "10px", textAlign: "center" }}>
+                {Array.from(
+                  { length: totalPages },
+                  (_, index) => index + 1
+                ).map((page) => (
                   <button
                     key={page}
-                    onClick={() => setPageForTab('all', page)}
+                    onClick={() => setPageForTab("all", page)}
                     style={{
-                      margin: '0 5px',
-                      padding: '5px 10px',
-                      backgroundColor: currentPage === page ? '#0a803e' : '#f0f0f0',
-                      color: currentPage === page ? '#fff' : '#000',
-                      border: 'none',
-                      cursor: 'pointer',
+                      margin: "0 5px",
+                      padding: "5px 10px",
+                      backgroundColor:
+                        currentPage === page ? "#0a803e" : "#f0f0f0",
+                      color: currentPage === page ? "#fff" : "#000",
+                      border: "none",
+                      cursor: "pointer",
                     }}
                   >
                     {page}
