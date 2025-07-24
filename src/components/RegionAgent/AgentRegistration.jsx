@@ -1,55 +1,62 @@
-import React, { useState, useEffect, useRef } from 'react';
-import Swal from 'sweetalert2';
+import React, { useState, useEffect, useRef } from "react";
+import Swal from "sweetalert2";
 
 import {
   FaUser,
   FaIdBadge,
   FaEnvelope,
   FaPhone,
-  FaMapMarkerAlt
-} from 'react-icons/fa';
-import { useSelector } from 'react-redux';
-import apiClient from '../apiClient';
-import '../../styles/registeredTables.css';
+  FaMapMarkerAlt,
+} from "react-icons/fa";
+import { useSelector } from "react-redux";
+import apiClient from "../apiClient";
+import "../../styles/registeredTables.css";
 
-const SearchableDropdown = ({ id, value, onChange, options, placeholder, noOptionsText }) => {
+const SearchableDropdown = ({
+  id,
+  value,
+  onChange,
+  options,
+  placeholder,
+  noOptionsText,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const dropdownRef = useRef(null);
 
-  const filteredOptions = options.filter(option =>
+  const filteredOptions = options.filter((option) =>
     option.label.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleClickOutside = (e) => {
     if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
       setIsOpen(false);
-      setSearchTerm('');
+      setSearchTerm("");
     }
   };
 
   useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const handleOptionSelect = (selectedValue) => {
     onChange({ target: { id, value: selectedValue } });
     setIsOpen(false);
-    setSearchTerm('');
+    setSearchTerm("");
   };
 
   return (
     <div className="searchable-dropdown" ref={dropdownRef}>
       <div className="dropdown-selected" onClick={() => setIsOpen(!isOpen)}>
         {value
-          ? options.find(opt => opt.value === value)?.label
+          ? options.find((opt) => opt.value === value)?.label
           : placeholder}
         <span className="dropdown-arrow">&#9662;</span>
       </div>
       {isOpen && (
         <div className="dropdown-menu">
-          <input 
+          <input
             type="text"
             className="dropdown-search"
             placeholder="Search..."
@@ -59,13 +66,18 @@ const SearchableDropdown = ({ id, value, onChange, options, placeholder, noOptio
           />
           <ul className="dropdown-list">
             {filteredOptions.length > 0 ? (
-              filteredOptions.map(option => (
-                <li key={option.id} onMouseDown={() => handleOptionSelect(option.value)}>
+              filteredOptions.map((option) => (
+                <li
+                  key={option.id}
+                  onMouseDown={() => handleOptionSelect(option.value)}
+                >
                   {option.label}
                 </li>
               ))
             ) : (
-              <li className="no-options">{noOptionsText || "No options found"}</li>
+              <li className="no-options">
+                {noOptionsText || "No options found"}
+              </li>
             )}
           </ul>
         </div>
@@ -77,15 +89,15 @@ const SearchableDropdown = ({ id, value, onChange, options, placeholder, noOptio
 const AgentsRegistration = ({ onClose, onRegistrationSuccess }) => {
   const accessToken = useSelector((state) => state.auth.accessToken);
   const [regData, setRegData] = useState({
-    firstName: '',
-    lastName: '',
-    idNumber: '',
-    email: '',
-    phoneNumber: '',
-    subRegion: '',
-    distributor: ''
+    firstName: "",
+    lastName: "",
+    idNumber: "",
+    email: "",
+    phoneNumber: "",
+    subRegion: "",
+    distributor: "",
   });
-  const [regError, setRegError] = useState('');
+  const [regError, setRegError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const [distributors, setDistributors] = useState([]);
@@ -93,7 +105,7 @@ const AgentsRegistration = ({ onClose, onRegistrationSuccess }) => {
 
   const fetchDistributors = async () => {
     try {
-      const { data } = await apiClient.get('/distributor/region');
+      const { data } = await apiClient.get("/distributor/email/region");
       if (Array.isArray(data)) {
         setDistributors(data);
       } else {
@@ -101,18 +113,18 @@ const AgentsRegistration = ({ onClose, onRegistrationSuccess }) => {
         setDistributors([]);
       }
     } catch (err) {
-      console.error('Distributor fetch error:', err);
+      console.error("Distributor fetch error:", err);
       setDistributors([]);
     }
   };
 
   const fetchSubregions = async () => {
     try {
-      const { data } = await apiClient.get('/subregion/all'); // or '/subregion/filter'
+      const { data } = await apiClient.get("/subregion/all"); // or '/subregion/filter'
       const normalized = Array.isArray(data?.[0]) ? data[0] : data;
       setSubregions(Array.isArray(normalized) ? normalized : []);
     } catch (err) {
-      console.error('Subregion fetch error:', err);
+      console.error("Subregion fetch error:", err);
       setSubregions([]);
     }
   };
@@ -125,54 +137,72 @@ const AgentsRegistration = ({ onClose, onRegistrationSuccess }) => {
   }, [accessToken]);
 
   const distributorOptions = Array.isArray(distributors)
-    ? distributors.map(dist => ({
+    ? distributors.map((dist) => ({
         id: dist.id,
         label: dist.businessName,
-        value: dist.businessName
+        value: dist.businessName,
       }))
     : [];
 
   const subregionOptions = Array.isArray(subregions)
-    ? subregions.map(sub => ({
+    ? subregions.map((sub) => ({
         id: sub.id,
         label: sub.subRegionName,
-        value: sub.subRegionName
+        value: sub.subRegionName,
       }))
     : [];
 
-  const simpleEmailValid = (email) => email.includes('@') && email.includes('.');
+  const simpleEmailValid = (email) =>
+    email.includes("@") && email.includes(".");
 
   const isFieldEmpty = (field) => !field.trim();
 
   const validateRequiredFields = () => {
-    const { firstName, lastName, idNumber, email, phoneNumber, subRegion, distributor } = regData;
-    const requiredFields = { firstName, lastName, idNumber, email, phoneNumber, subRegion, distributor };
-  
+    const {
+      firstName,
+      lastName,
+      idNumber,
+      email,
+      phoneNumber,
+      subRegion,
+      distributor,
+    } = regData;
+    const requiredFields = {
+      firstName,
+      lastName,
+      idNumber,
+      email,
+      phoneNumber,
+      subRegion,
+      distributor,
+    };
+
     for (const [key, value] of Object.entries(requiredFields)) {
-      if (isFieldEmpty(value)) return `${key.replace(/([A-Z])/g, ' $1')} is required.`;
+      if (isFieldEmpty(value))
+        return `${key.replace(/([A-Z])/g, " $1")} is required.`;
     }
     return "";
   };
-  
+
   const validateEmailFormat = (email) => {
     return simpleEmailValid(email) ? "" : "Please enter a valid email address.";
   };
-  
+
   const validateRegistrationForm = () => {
     return validateRequiredFields() || validateEmailFormat(regData.email);
   };
-  
+
   const clearRegistrationForm = () => {
     setRegData({
-      firstName: '',
-      lastName: '',
-      idNumber: '',
-      email: '',
-      phoneNumber: '',
-      subRegion: '',
-      distributor: ''
+      firstName: "",
+      lastName: "",
+      idNumber: "",
+      email: "",
+      phoneNumber: "",
+      subRegion: "",
+      distributor: "",
     });
-    setRegError('');
+    setRegError("");
   };
 
   const handleRegChange = (e) => {
@@ -186,34 +216,34 @@ const AgentsRegistration = ({ onClose, onRegistrationSuccess }) => {
     if (validationError) {
       setRegError(validationError);
       Swal.fire({
-        icon: 'error',
-        title: 'Validation Error',
+        icon: "error",
+        title: "Validation Error",
         text: validationError,
       });
       return;
     }
-    setRegError('');
+    setRegError("");
     setIsLoading(true);
-    
+
     Swal.fire({
-      title: 'Loading...',
-      text: 'Please wait...',
+      title: "Loading...",
+      text: "Please wait...",
       allowOutsideClick: false,
       didOpen: () => {
         Swal.showLoading();
-      }
+      },
     });
-    
+
     const payload = { ...regData };
     try {
-      const response = await apiClient.post('/agent', payload, {
-        headers: { 'Content-Type': 'application/json' }
+      const response = await apiClient.post("/agent", payload, {
+        headers: { "Content-Type": "application/json" },
       });
       const responseText = response.data;
       Swal.close();
       Swal.fire({
-        icon: 'success',
-        title: 'Success',
+        icon: "success",
+        title: "Success",
         text: responseText,
       }).then(() => {
         clearRegistrationForm();
@@ -223,9 +253,11 @@ const AgentsRegistration = ({ onClose, onRegistrationSuccess }) => {
     } catch (err) {
       Swal.close();
       Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: err.response?.data || "An error occurred while registering. Please try again.",
+        icon: "error",
+        title: "Error",
+        text:
+          err.response?.data ||
+          "An error occurred while registering. Please try again.",
       });
     } finally {
       setIsLoading(false);
@@ -321,7 +353,7 @@ const AgentsRegistration = ({ onClose, onRegistrationSuccess }) => {
             <label htmlFor="subRegion">
               <FaMapMarkerAlt className="icon" /> Area
             </label>
-            <SearchableDropdown 
+            <SearchableDropdown
               id="subRegion"
               value={regData.subRegion}
               onChange={handleRegChange}
@@ -337,7 +369,7 @@ const AgentsRegistration = ({ onClose, onRegistrationSuccess }) => {
             <label htmlFor="distributor">
               <FaIdBadge className="icon" /> Dealer
             </label>
-            <SearchableDropdown 
+            <SearchableDropdown
               id="distributor"
               value={regData.distributor}
               onChange={handleRegChange}
@@ -350,7 +382,7 @@ const AgentsRegistration = ({ onClose, onRegistrationSuccess }) => {
 
         {regError && <p className="error-message">{regError}</p>}
         <button type="submit" className="submit-btn" disabled={isLoading}>
-          {isLoading ? 'Registering...' : 'Register Agent'}
+          {isLoading ? "Registering..." : "Register Agent"}
         </button>
       </form>
     </div>
