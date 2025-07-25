@@ -1,33 +1,36 @@
-import React, { useState, useEffect } from 'react';
-import Swal from 'sweetalert2';
-import { FaTrash, FaEye } from 'react-icons/fa';
-import GenericModal from '../GenericModal';
-import RegionsRegistration from './RegionRegistration';
-import RegionsUpdate from './RegionUpdate';
-import RegionsView from './RegionsView';
-import { useSelector } from 'react-redux';
-import apiClient from '../apiClient';
-import '../../styles/registeredTables.css';
-import '../../styles/roles.css';
+import React, { useState, useEffect } from "react";
+import Swal from "sweetalert2";
+import { FaTrash, FaEye } from "react-icons/fa";
+import GenericModal from "../GenericModal";
+import RegionsRegistration from "./RegionRegistration";
+import RegionsUpdate from "./RegionUpdate";
+import RegionsView from "./RegionsView";
+import { useSelector } from "react-redux";
+import apiClient from "../apiClient";
+import "../../styles/registeredTables.css";
+import "../../styles/roles.css";
 
 const RegionsManagement = () => {
   const accessToken = useSelector((state) => state.auth.accessToken);
   const groupData = useSelector((state) => state.auth.groupData);
-  
+
   const [mode, setMode] = useState("table");
   const [regions, setRegions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [editingRegion, setEditingRegion] = useState(null);
-  const [setUpdateFormData] = useState({ regionName: "", regionCode: "" });
+  const [updateFormData, setUpdateFormData] = useState({
+    regionName: "",
+    regionCode: "",
+  });
   //const [updating, setUpdating] = useState(false);
   const [viewRecord, setViewRecord] = useState(null);
 
   const fetchRegions = async () => {
     try {
       setLoading(true);
-      const { data } = await apiClient.get('/region/all');
+      const { data } = await apiClient.get("/region/all");
       setRegions(data);
     } catch (err) {
       setError(err.message);
@@ -36,12 +39,12 @@ const RegionsManagement = () => {
     }
   };
 
-  useEffect(() => { 
-    if (accessToken) fetchRegions(); 
+  useEffect(() => {
+    if (accessToken) fetchRegions();
   }, [accessToken]);
 
-  // const handleRegChange = (e) => { 
-  //   setRegFormData({ ...regFormData, [e.target.id]: e.target.value }); 
+  // const handleRegChange = (e) => {
+  //   setRegFormData({ ...regFormData, [e.target.id]: e.target.value });
   // };
 
   // const handleRegSubmit = async (e) => {
@@ -68,8 +71,8 @@ const RegionsManagement = () => {
   //   }
   // };
 
-  // const handleUpdateChange = (e) => { 
-  //   setUpdateFormData({ ...updateFormData, [e.target.id]: e.target.value }); 
+  // const handleUpdateChange = (e) => {
+  //   setUpdateFormData({ ...updateFormData, [e.target.id]: e.target.value });
   // };
 
   // const handleUpdateSubmit = async (e) => {
@@ -103,7 +106,7 @@ const RegionsManagement = () => {
 
   // eslint-disable-next-line complexity
   const handleDelete = async (regionCode) => {
-    const region = regions.find(r => r.regionCode === regionCode);
+    const region = regions.find((r) => r.regionCode === regionCode);
     const result = await Swal.fire({
       title: "Confirm Deletion",
       text: `To delete region "${region.regionName}", please type "yes" below:`,
@@ -114,28 +117,51 @@ const RegionsManagement = () => {
       confirmButtonText: "Delete",
       confirmButtonColor: "#2B9843",
       preConfirm: (inputValue) => {
-        if (inputValue !== "yes") { 
-          Swal.showValidationMessage('You must type "yes" to confirm deletion.');
+        if (inputValue !== "yes") {
+          Swal.showValidationMessage(
+            'You must type "yes" to confirm deletion.'
+          );
         }
         return inputValue;
-      }
+      },
     });
     if (result.isConfirmed && result.value === "yes") {
       try {
-        const response = await apiClient.delete('/region/delete', {
-          params: { regionCode }
+        const response = await apiClient.delete("/region/delete", {
+          params: { regionCode },
         });
-        const successMessage = response.data;Swal.fire({ icon: "success", title: "Deleted!", text: successMessage, confirmButtonColor: "#2B9843" });
-        setRegions(regions.filter(r => r.regionCode !== regionCode));
-      } catch (err) {Swal.fire({ icon: "error", title: "Delete Failed", text: err.response?.data || err.message });}
+        const successMessage = response.data;
+        Swal.fire({
+          icon: "success",
+          title: "Deleted!",
+          text: successMessage,
+          confirmButtonColor: "#2B9843",
+        });
+        setRegions(regions.filter((r) => r.regionCode !== regionCode));
+      } catch (err) {
+        Swal.fire({
+          icon: "error",
+          title: "Delete Failed",
+          text: err.response?.data || err.message,
+        });
+      }
     }
   };
 
-  const handleEdit = (regionCode) => {
-    const region = regions.find(r => r.regionCode === regionCode);
-    setEditingRegion(region);
-    setUpdateFormData({ regionName: region.regionName || "", regionCode: region.regionCode || "" });
-    setMode("update");
+  const handleEdit = async (regionCode) => {
+    console.log("function to eddit called");
+    try {
+      const region = regions.find((r) => r.regionCode === regionCode);
+      setEditingRegion(region);
+      setUpdateFormData({
+        regionName: region.regionName || "",
+        regionCode: region.regionCode || "",
+      });
+      setMode("update");
+    } catch (error) {
+      console.log("error in updating the region");
+      console.log(error);
+    }
   };
 
   const handleView = (region) => {
@@ -154,10 +180,10 @@ const RegionsManagement = () => {
     return (
       <div className="registered-table">
         <div className="table-header">
-          <img 
-            src="https://images.pexels.com/photos/8943323/pexels-photo-8943323.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" 
-            alt="Regions" 
-            className="header-image" 
+          <img
+            src="https://images.pexels.com/photos/8943323/pexels-photo-8943323.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+            alt="Regions"
+            className="header-image"
           />
           <div className="header-overlay">
             <h2>Registered Regions</h2>
@@ -165,22 +191,29 @@ const RegionsManagement = () => {
         </div>
         <div className="table-content">
           <div className="table-controls">
-            <button className="register-btn" onClick={() => {
-              if (!groupData?.permissions?.createRegion) {
-                Swal.fire({ icon: 'error', title: 'Access Denied', text: 'You do not have permission to register a region.' });
-                return;
-              }
-              setMode("register");
-            }}>
+            <button
+              className="register-btn"
+              onClick={() => {
+                if (!groupData?.permissions?.createRegion) {
+                  Swal.fire({
+                    icon: "error",
+                    title: "Access Denied",
+                    text: "You do not have permission to register a region.",
+                  });
+                  return;
+                }
+                setMode("register");
+              }}
+            >
               Register Region
             </button>
           </div>
-          <input 
-            type="text" 
-            placeholder="Search regions..." 
-            value={searchTerm} 
-            onChange={(e) => setSearchTerm(e.target.value)} 
-            className="search-input" 
+          <input
+            type="text"
+            placeholder="Search regions..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="search-input"
           />
           <table>
             <thead>
@@ -196,31 +229,52 @@ const RegionsManagement = () => {
                   <td data-label="Region Name">{region.regionName}</td>
                   <td data-label="Region Code">{region.regionCode}</td>
                   <td data-label="Actions">
-                    <button className="action-btn update-btn" onClick={() => {
-                      if (!groupData?.permissions?.updateRegion) {
-                        Swal.fire({ icon: 'error', title: 'Access Denied', text: 'You do not have permission to update a region.' });
-                        return;
-                      }
-                      handleEdit(region.regionCode);
-                    }}>
+                    <button
+                      className="action-btn update-btn"
+                      onClick={() => {
+                        if (!groupData?.permissions?.updateRegion) {
+                          Swal.fire({
+                            icon: "error",
+                            title: "Access Denied",
+                            text: "You do not have permission to update a region.",
+                          });
+                          return;
+                        }
+                        handleEdit(region.regionCode);
+                      }}
+                    >
                       Edit
                     </button>
-                    <button className="action-btn delete-btn" onClick={() => {
-                      if (!groupData?.permissions?.deleteRegion) {
-                        Swal.fire({ icon: 'error', title: 'Access Denied', text: 'You do not have permission to delete a region.' });
-                        return;
-                      }
-                      handleDelete(region.regionCode);
-                    }}>
+                    <button
+                      className="action-btn delete-btn"
+                      onClick={() => {
+                        if (!groupData?.permissions?.deleteRegion) {
+                          Swal.fire({
+                            icon: "error",
+                            title: "Access Denied",
+                            text: "You do not have permission to delete a region.",
+                          });
+                          return;
+                        }
+                        handleDelete(region.regionCode);
+                      }}
+                    >
                       <FaTrash /> Delete
                     </button>
-                    <button className="action-btn view-btn" onClick={() => {
-                      if (!groupData?.permissions?.readRegion) {
-                        Swal.fire({ icon: 'error', title: 'Access Denied', text: 'You do not have permission to view region details.' });
-                        return;
-                      }
-                      handleView(region);
-                    }}>
+                    <button
+                      className="action-btn view-btn"
+                      onClick={() => {
+                        if (!groupData?.permissions?.readRegion) {
+                          Swal.fire({
+                            icon: "error",
+                            title: "Access Denied",
+                            text: "You do not have permission to view region details.",
+                          });
+                          return;
+                        }
+                        handleView(region);
+                      }}
+                    >
                       <FaEye /> View
                     </button>
                   </td>
@@ -235,21 +289,39 @@ const RegionsManagement = () => {
   if (mode === "register") {
     return (
       <GenericModal onClose={() => setMode("table")}>
-        <RegionsRegistration onClose={() => setMode("table")} onRegistrationSuccess={fetchRegions} />
+        <RegionsRegistration
+          onClose={() => setMode("table")}
+          onRegistrationSuccess={fetchRegions}
+        />
       </GenericModal>
     );
   }
   if (mode === "update" && editingRegion) {
     return (
       <GenericModal onClose={() => setMode("table")}>
-        <RegionsUpdate record={editingRegion} onClose={() => setMode("table")} onUpdateSuccess={fetchRegions} />
+        <RegionsUpdate
+          record={editingRegion}
+          onClose={() => setMode("table")}
+          onUpdateSuccess={fetchRegions}
+        />
       </GenericModal>
     );
   }
   if (mode === "view" && viewRecord) {
     return (
-      <GenericModal onClose={() => { setViewRecord(null); setMode("table"); }}>
-        <RegionsView record={viewRecord} onClose={() => { setViewRecord(null); setMode("table"); }} />
+      <GenericModal
+        onClose={() => {
+          setViewRecord(null);
+          setMode("table");
+        }}
+      >
+        <RegionsView
+          record={viewRecord}
+          onClose={() => {
+            setViewRecord(null);
+            setMode("table");
+          }}
+        />
       </GenericModal>
     );
   }
