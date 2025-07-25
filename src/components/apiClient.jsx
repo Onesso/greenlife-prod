@@ -3,7 +3,7 @@ import Swal from "sweetalert2";
 import { store } from "./store/store";
 import { clearAuth } from "./store/authSlice";
 
-export const BASE_URL = "http://18.191.222.11/rest/";
+export const BASE_URL = "https://jituze.greenlife.co.ke/rest/";
 
 const apiClient = axios.create({
   baseURL: BASE_URL,
