@@ -837,11 +837,12 @@ tbody tr:nth-child(even) {
 .dropbtn {
   background-color: #04aa6d;
   color: white;
-  padding: 10px;
+  padding: 10px 15px;
   font-size: 14px;
   border: none;
   cursor: pointer;
   border-radius: 5px;
+  margin-bottom: 10px;
 }
 
 .dropdown {

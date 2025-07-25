@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import { createBrowserRouter } from "react-router-dom";
 import Login from "./Login";
 import LandingPage from "./LandingPage";
@@ -25,7 +25,7 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Login />,
-    errorElement: <ErrorPage />
+    errorElement: <ErrorPage />,
   },
   {
     path: "/landingpage",
@@ -52,14 +52,14 @@ const router = createBrowserRouter([
       { path: "commission-disbursement", element: <CommissionsTable /> },
       { path: "paid-commissions", element: <PaidCommissionsTable /> },
       { path: "user", element: <UserTable /> },
-      { path: "group", element: <GroupTable /> }
-    ]
+      { path: "group", element: <GroupTable /> },
+    ],
   },
   {
     path: "/error",
     element: <ErrorPage />,
-    errorElement: <ErrorPage />
-  }
+    errorElement: <ErrorPage />,
+  },
 ]);
 
 export default router;
