@@ -49,7 +49,7 @@ const mainMenuItems = [
     icon: <FaMoneyBill />,
     subItems: [
       { key: 'reports', label: 'Sales', icon: <FaChartLine /> },
-      { key: 'groupedSales', label: 'Paid commisions', icon: <FaChartLine /> }
+      { key: 'groupedSales', label: 'Commisions', icon: <FaChartLine /> }
     ]
   },
   {
@@ -153,7 +153,7 @@ function LandingPage() {
   });
 
   const menuPermissionMapping = {
-    dashboard: null, 
+    dashboard: null,
     agents: 'readAgent',
     distributors: 'readDistributor',
     regionalManagers: 'readRegionManager',
