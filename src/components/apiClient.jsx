@@ -1,9 +1,9 @@
-import axios from 'axios';
-import Swal from 'sweetalert2';
-import { store } from './store/store';
-import { clearAuth } from './store/authSlice';
+import axios from "axios";
+import Swal from "sweetalert2";
+import { store } from "./store/store";
+import { clearAuth } from "./store/authSlice";
 
-export const BASE_URL = 'http://18.191.222.11/rest/';
+export const BASE_URL = "http://18.191.222.11/rest/";
 
 const apiClient = axios.create({
   baseURL: BASE_URL,
@@ -11,10 +11,9 @@ const apiClient = axios.create({
 
 apiClient.interceptors.request.use(
   (config) => {
-
     if (
-      !config.url.includes('/registration/login') &&
-      !config.url.includes('/region-manager/login')
+      !config.url.includes("/registration/login") &&
+      !config.url.includes("/region-manager/login")
     ) {
       const token = store.getState().auth.accessToken;
       if (token) {
@@ -36,8 +35,8 @@ apiClient.interceptors.response.use(
 
     // Skip handling for login endpoints.
     if (
-      originalRequest.url.includes('/registration/login') ||
-      originalRequest.url.includes('/region-manager/login')
+      originalRequest.url.includes("/registration/login") ||
+      originalRequest.url.includes("/region-manager/login")
     ) {
       return Promise.reject(error);
     }
@@ -45,14 +44,14 @@ apiClient.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       store.dispatch(clearAuth());
-      
+
       if (!isAlertShown) {
         isAlertShown = true;
         Swal.fire({
-          title: 'Session Expired',
-          text: 'Your session has expired. Please login again.',
-          icon: 'warning',
-          confirmButtonText: 'Ok'
+          title: "Session Expired",
+          text: "Your session has expired. Please login again.",
+          icon: "warning",
+          confirmButtonText: "Ok",
         }).then((result) => {
           if (result.isConfirmed) {
             // window.location.href = '/';
@@ -60,7 +59,7 @@ apiClient.interceptors.response.use(
           isAlertShown = false;
         });
       }
-      
+
       return Promise.reject(error);
     }
     return Promise.reject(error);
