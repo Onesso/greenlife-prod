@@ -229,54 +229,59 @@ const RegionsManagement = () => {
                   <td data-label="Region Name">{region.regionName}</td>
                   <td data-label="Region Code">{region.regionCode}</td>
                   <td data-label="Actions">
-                    <button
-                      className="action-btn update-btn"
-                      onClick={() => {
-                        if (!groupData?.permissions?.updateRegion) {
-                          Swal.fire({
-                            icon: "error",
-                            title: "Access Denied",
-                            text: "You do not have permission to update a region.",
-                          });
-                          return;
-                        }
-                        handleEdit(region.regionCode);
-                      }}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="action-btn delete-btn"
-                      onClick={() => {
-                        if (!groupData?.permissions?.deleteRegion) {
-                          Swal.fire({
-                            icon: "error",
-                            title: "Access Denied",
-                            text: "You do not have permission to delete a region.",
-                          });
-                          return;
-                        }
-                        handleDelete(region.regionCode);
-                      }}
-                    >
-                      <FaTrash /> Delete
-                    </button>
-                    <button
-                      className="action-btn view-btn"
-                      onClick={() => {
-                        if (!groupData?.permissions?.readRegion) {
-                          Swal.fire({
-                            icon: "error",
-                            title: "Access Denied",
-                            text: "You do not have permission to view region details.",
-                          });
-                          return;
-                        }
-                        handleView(region);
-                      }}
-                    >
-                      <FaEye /> View
-                    </button>
+                    <div className="dropdown">
+                      <button className="dropbtn">action</button>
+                      <div className="dropdown-content">
+                        <button
+                          className="action-btn update-btn"
+                          onClick={() => {
+                            if (!groupData?.permissions?.updateRegion) {
+                              Swal.fire({
+                                icon: "error",
+                                title: "Access Denied",
+                                text: "You do not have permission to update a region.",
+                              });
+                              return;
+                            }
+                            handleEdit(region.regionCode);
+                          }}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="action-btn delete-btn"
+                          onClick={() => {
+                            if (!groupData?.permissions?.deleteRegion) {
+                              Swal.fire({
+                                icon: "error",
+                                title: "Access Denied",
+                                text: "You do not have permission to delete a region.",
+                              });
+                              return;
+                            }
+                            handleDelete(region.regionCode);
+                          }}
+                        >
+                          <FaTrash /> Delete
+                        </button>
+                        <button
+                          className="action-btn view-btn"
+                          onClick={() => {
+                            if (!groupData?.permissions?.readRegion) {
+                              Swal.fire({
+                                icon: "error",
+                                title: "Access Denied",
+                                text: "You do not have permission to view region details.",
+                              });
+                              return;
+                            }
+                            handleView(region);
+                          }}
+                        >
+                          <FaEye /> View
+                        </button>
+                      </div>
+                    </div>
                   </td>
                 </tr>
               ))}
