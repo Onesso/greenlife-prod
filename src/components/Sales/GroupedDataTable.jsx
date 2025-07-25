@@ -171,10 +171,26 @@ const GroupedDataTable = () => {
               ))}
             </tbody>
           </table>
+
           {filteredData.length > rowsPerPage && (
-            <div style={{ marginTop: "10px", textAlign: "center" }}>
-              {Array.from({ length: totalPages }, (_, index) => index + 1).map(
-                (page) => (
+            <div
+              style={{
+                marginTop: "10px",
+                textAlign: "center",
+                overflowX: "auto",
+              }}
+            >
+              <div
+                style={{
+                  display: "inline-block",
+                  whiteSpace: "nowrap",
+                  padding: "5px",
+                }}
+              >
+                {Array.from(
+                  { length: totalPages },
+                  (_, index) => index + 1
+                ).map((page) => (
                   <button
                     key={page}
                     onClick={() => setPageForTab("all", page)}
@@ -186,12 +202,13 @@ const GroupedDataTable = () => {
                       color: currentPage === page ? "#fff" : "#000",
                       border: "none",
                       cursor: "pointer",
+                      borderRadius: "4px",
                     }}
                   >
                     {page}
                   </button>
-                )
-              )}
+                ))}
+              </div>
             </div>
           )}
         </div>
