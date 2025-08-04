@@ -338,7 +338,7 @@ function CommissionsTable() {
                     <th>Email</th>
                     <th>Phone</th>
                     <th>Amount</th>
-                    <th>Initial Commission</th>
+                    <th>Commission</th>
                     {/* <th>Final Commission</th> */}
                     <th>Sub-region</th>
                     <th>Region</th>
