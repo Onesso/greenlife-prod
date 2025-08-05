@@ -420,7 +420,7 @@ function SalesTable() {
                 <th>Amount</th>
                 <th>Created Date</th>
                 <th>Created Time</th>
-                {tabName === "accepted" && <th>Initial commission</th>}
+                {tabName === "accepted" && <th>Commission</th>}
                 <th>Status</th>
                 <th>Product details</th>
                 <th>Receipt image</th>
