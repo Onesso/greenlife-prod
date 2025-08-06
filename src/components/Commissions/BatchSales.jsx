@@ -223,7 +223,7 @@ function BatchDetails({ agentId, onBack, batchSales }) {
               <th>Posting Date</th>
               <th>Posting Time</th>
               <th>State</th>
-              <th>Initial Commission</th>
+              <th>Commission</th>
               <th>CSV State</th>
               <th>Receipt Image</th>
             </tr>
