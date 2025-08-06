@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import Swal from 'sweetalert2';
-import '../../styles/registeredTables.css';
-import { useSelector } from 'react-redux';
-import ProductDetails from '../Sales/ProductDetails';
-import GenericModal from '../GenericModal';
-import { BASE_URL } from '../apiClient';
-import apiClient from '../apiClient';
-import { FaArrowLeft } from 'react-icons/fa';
-import { usePagination } from '../PaginationContext';
+import React, { useState, useEffect } from "react";
+import Swal from "sweetalert2";
+import "../../styles/registeredTables.css";
+import { useSelector } from "react-redux";
+import ProductDetails from "../Sales/ProductDetails";
+import GenericModal from "../GenericModal";
+import { BASE_URL } from "../apiClient";
+import apiClient from "../apiClient";
+import { FaArrowLeft } from "react-icons/fa";
+import { usePagination } from "../PaginationContext";
 
 const swalOptions = {
-  background: '#ffffff',
-  confirmButtonColor: '#2ECC71',
-  cancelButtonColor: '#e74c3c',
-  color: '#283e56',
+  background: "#ffffff",
+  confirmButtonColor: "#2ECC71",
+  cancelButtonColor: "#e74c3c",
+  color: "#283e56",
 };
 
 function BatchDetails({ agentId, onBack, batchSales }) {
@@ -23,7 +23,7 @@ function BatchDetails({ agentId, onBack, batchSales }) {
   const [sales, setSales] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
   const { pages, setPageForTab, rowsPerPage } = usePagination();
   const currentPage = pages.salesDetails || 1;
@@ -39,7 +39,7 @@ function BatchDetails({ agentId, onBack, batchSales }) {
     const fetchSalesDetails = async () => {
       setLoading(true);
       try {
-        const { data } = await apiClient.get('/sales/fetch', {
+        const { data } = await apiClient.get("/sales/fetch", {
           params: { salesPersonId: agentId },
           headers: { Authorization: `Bearer ${accessToken}` },
         });
@@ -63,9 +63,9 @@ function BatchDetails({ agentId, onBack, batchSales }) {
       } catch (error) {
         Swal.fire({
           ...swalOptions,
-          title: 'Error fetching sales details',
+          title: "Error fetching sales details",
           text: error.message,
-          icon: 'error',
+          icon: "error",
         });
       } finally {
         setLoading(false);
@@ -81,26 +81,26 @@ function BatchDetails({ agentId, onBack, batchSales }) {
     if (!groupData?.permissions?.readProduct) {
       Swal.fire({
         ...swalOptions,
-        icon: 'error',
-        title: 'Access Denied',
-        text: 'You do not have permission to view product details.'
+        icon: "error",
+        title: "Access Denied",
+        text: "You do not have permission to view product details.",
       });
       return;
     }
     Swal.fire({
       ...swalOptions,
-      title: 'Fetching Product Details...',
+      title: "Fetching Product Details...",
       allowOutsideClick: false,
       didOpen: () => {
         Swal.showLoading();
       },
     });
     try {
-      const { data } = await apiClient.get('/sales/sold-products', {
+      const { data } = await apiClient.get("/sales/sold-products", {
         params: { id: ref_id },
         headers: { Authorization: `Bearer ${accessToken}` },
       });
-      if (!data) throw new Error('Network error');
+      if (!data) throw new Error("Network error");
       const productDetails = Array.isArray(data.object) ? data.object : [];
       Swal.close();
       setSelectedProduct(productDetails);
@@ -108,9 +108,9 @@ function BatchDetails({ agentId, onBack, batchSales }) {
       Swal.close();
       Swal.fire({
         ...swalOptions,
-        title: 'Error',
-        text: 'Could not fetch product details. Please try again.',
-        icon: 'error'
+        title: "Error",
+        text: "Could not fetch product details. Please try again.",
+        icon: "error",
       });
     }
   };
@@ -119,20 +119,20 @@ function BatchDetails({ agentId, onBack, batchSales }) {
     if (!groupData?.permissions?.viewRecieptImage) {
       Swal.fire({
         ...swalOptions,
-        icon: 'error',
-        title: 'Access Denied',
-        text: 'You do not have permission to view receipt images.'
+        icon: "error",
+        title: "Access Denied",
+        text: "You do not have permission to view receipt images.",
       });
       return;
     }
     const imageUrl = `${BASE_URL}/serve/getImage/${reciept_image_path}`;
     Swal.fire({
       ...swalOptions,
-      title: 'Receipt Image',
+      title: "Receipt Image",
       html: `<img src="${imageUrl}" style="width:100%; height:auto; max-height:80vh;" />`,
       heightAuto: false,
       showConfirmButton: true,
-      confirmButtonText: 'Close'
+      confirmButtonText: "Close",
     });
   };
 
@@ -142,27 +142,36 @@ function BatchDetails({ agentId, onBack, batchSales }) {
 
   if (selectedProduct) {
     return (
-      <GenericModal onClose={() => setSelectedProduct(null)} showBackButton={true}>
-        <div className="modal-inner-content" style={{ padding: '1rem' }}>
-          <ProductDetails records={selectedProduct} onClose={() => setSelectedProduct(null)} />
+      <GenericModal
+        onClose={() => setSelectedProduct(null)}
+        showBackButton={true}
+      >
+        <div className="modal-inner-content" style={{ padding: "1rem" }}>
+          <ProductDetails
+            records={selectedProduct}
+            onClose={() => setSelectedProduct(null)}
+          />
         </div>
       </GenericModal>
     );
   }
 
-  const filteredSales = sales.filter(sale => {
+  const filteredSales = sales.filter((sale) => {
     const search = searchTerm.toLowerCase();
     return (
-      (sale.first_name || '').toLowerCase().includes(search) ||
-      (sale.last_name || '').toLowerCase().includes(search) ||
-      (sale.phone_number || '').toLowerCase().includes(search) ||
-      (sale.distributor || '').toLowerCase().includes(search) ||
-      (sale.region_name || '').toLowerCase().includes(search) ||
-      (sale.sub_region || '').toLowerCase().includes(search) ||
-      (sale.initial_commission ? sale.initial_commission.toString().toLowerCase() : '').includes(search) ||
-      (sale.posting_date || '').toLowerCase().includes(search) ||
-      (sale.posting_state || '').toLowerCase().includes(search) ||
-      (sale.csv_state || '').toLowerCase().includes(search)
+      (sale.first_name || "").toLowerCase().includes(search) ||
+      (sale.last_name || "").toLowerCase().includes(search) ||
+      (sale.phone_number || "").toLowerCase().includes(search) ||
+      (sale.distributor || "").toLowerCase().includes(search) ||
+      (sale.region_name || "").toLowerCase().includes(search) ||
+      (sale.sub_region || "").toLowerCase().includes(search) ||
+      (sale.initial_commission
+        ? sale.initial_commission.toString().toLowerCase()
+        : ""
+      ).includes(search) ||
+      (sale.posting_date || "").toLowerCase().includes(search) ||
+      (sale.posting_state || "").toLowerCase().includes(search) ||
+      (sale.csv_state || "").toLowerCase().includes(search)
     );
   });
 
@@ -181,30 +190,30 @@ function BatchDetails({ agentId, onBack, batchSales }) {
           className="header-image"
         />
         <div className="header-overlay">
-          <h2>{batchSales ? 'Batch Details' : 'Sales Details'}</h2>
+          <h2>{batchSales ? "Batch Details" : "Sales Details"}</h2>
         </div>
       </div>
-      <button 
-        className="modal-close-btn" 
+      <button
+        className="modal-close-btn"
         onClick={onBack}
-        style={{ margin: '1rem' }}
+        style={{ margin: "1rem" }}
       >
         <FaArrowLeft className="icon" /> Back
       </button>
-      <div style={{ margin: '0 1rem' }}>
-        <input 
-          type="text" 
-          placeholder="Search sales..." 
-          value={searchTerm} 
+      <div style={{ margin: "0 1rem" }}>
+        <input
+          type="text"
+          placeholder="Search sales..."
+          value={searchTerm}
           onChange={(e) => {
             setSearchTerm(e.target.value);
-            setPageForTab('salesDetails', 1);
+            setPageForTab("salesDetails", 1);
           }}
           className="search-input"
         />
       </div>
       <div className="table-content">
-        <table className="registered-table" style={{ margin: '-20px 0' }}>
+        <table className="registered-table" style={{ margin: "-20px 0" }}>
           <thead>
             <tr>
               <th>SN</th>
@@ -223,21 +232,27 @@ function BatchDetails({ agentId, onBack, batchSales }) {
             {paginatedSales.length > 0 ? (
               paginatedSales.map((sale, index) => (
                 <tr key={sale.id}>
-                  <td data-label="SN">{index + 1 + (currentPage - 1) * rowsPerPage}</td>
-                  <td data-label="First Name">{sale.first_name || 'N/A'}</td>
-                  <td data-label="Email">{sale.email || 'N/A'}</td>
-                  <td data-label="Phone Number">{sale.phone_number || 'N/A'}</td>
+                  <td data-label="SN">
+                    {index + 1 + (currentPage - 1) * rowsPerPage}
+                  </td>
+                  <td data-label="First Name">{sale.first_name || "N/A"}</td>
+                  <td data-label="Email">{sale.email || "N/A"}</td>
+                  <td data-label="Phone Number">
+                    {sale.phone_number || "N/A"}
+                  </td>
                   <td data-label="Posting Date">
-                    {sale.posting_date.split('T')[0]}
+                    {sale.posting_date.split("T")[0]}
                   </td>
                   <td data-label="Posting Time">
-                    {sale.posting_date.split('T')[1].split('.')[0]}
+                    {sale.posting_date.split("T")[1].split(".")[0]}
                   </td>
-                  <td data-label="State">{sale.posting_state || sale.state || 'N/A'}</td>
-                  <td data-label="Initial Commission">{sale.initial_commission}</td>
+                  <td data-label="State">
+                    {sale.posting_state || sale.state || "N/A"}
+                  </td>
+                  <td data-label="Commission">{sale.initial_commission}</td>
                   <td data-label="CSV State">{sale.csv_state}</td>
                   <td data-label="Receipt Image">
-                    <button 
+                    <button
                       className="action-btn view-btn no-print screen-only"
                       onClick={() => handleViewImage(sale.reciept_image_path)}
                     >
@@ -248,7 +263,10 @@ function BatchDetails({ agentId, onBack, batchSales }) {
               ))
             ) : (
               <tr>
-                <td colSpan="10" style={{ textAlign: 'center', padding: '20px' }}>
+                <td
+                  colSpan="10"
+                  style={{ textAlign: "center", padding: "20px" }}
+                >
                   No batch records found.
                 </td>
               </tr>
@@ -256,18 +274,19 @@ function BatchDetails({ agentId, onBack, batchSales }) {
           </tbody>
         </table>
         {totalPages > 1 && (
-          <div style={{ marginTop: '10px', textAlign: 'center' }}>
+          <div style={{ marginTop: "10px", textAlign: "center" }}>
             {Array.from({ length: totalPages }, (_, page) => (
               <button
                 key={page + 1}
-                onClick={() => setPageForTab('salesDetails', page + 1)}
+                onClick={() => setPageForTab("salesDetails", page + 1)}
                 style={{
-                  margin: '0 5px',
-                  padding: '5px 10px',
-                  backgroundColor: currentPage === page + 1 ? '#0a803e' : '#f0f0f0',
-                  color: currentPage === page + 1 ? '#fff' : '#000',
-                  border: 'none',
-                  cursor: 'pointer',
+                  margin: "0 5px",
+                  padding: "5px 10px",
+                  backgroundColor:
+                    currentPage === page + 1 ? "#0a803e" : "#f0f0f0",
+                  color: currentPage === page + 1 ? "#fff" : "#000",
+                  border: "none",
+                  cursor: "pointer",
                 }}
               >
                 {page + 1}

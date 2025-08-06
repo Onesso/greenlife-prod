@@ -175,6 +175,7 @@ function CommissionsTable() {
       return;
     }
     const sale = approval2Data.find((s) => s.id === id);
+
     if (
       !(await confirmAction(
         `Approve commission for ${sale?.first_name || "this sale"}?`
@@ -228,6 +229,7 @@ function CommissionsTable() {
       Swal.close();
       if (data.successful) {
         setBatchSalesData(data.object);
+        console.log("this is what we have st0red:", batchSalesData)
         setShowBatchDetails(true);
       } else throw new Error(data.message || "Failed to fetch batch details");
     } catch (err) {
@@ -373,7 +375,7 @@ function CommissionsTable() {
                           <td data-label="Email">{item.email}</td>
                           <td data-label="Phone">{item.phone_number}</td>
                           <td data-label="Amount">{item.amount}</td>
-                          <td data-label="Initial Commission">
+                          <td data-label="Commission">
                             {item.initial_commission}
                           </td>
                           {/* <td data-label="Final Commission">{item.final_commission}</td> */}
